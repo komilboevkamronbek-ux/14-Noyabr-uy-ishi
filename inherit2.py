@@ -97,90 +97,157 @@
 
 #                    2-masala
 
-class Person:
-    def __init__(self, name, id_number):
-        self.name = name
-        self.id_number = id_number
+# class Person:
+#     def __init__(self, name, id_number):
+#         self.name = name
+#         self.id_number = id_number
         
-    def get_name(self):
-        return self.name
+#     def get_name(self):
+#         return self.name
     
-    def get_id(self):
-        return self.id_number
+#     def get_id(self):
+#         return self.id_number
     
-    def __str__(self):
-        return f"Person: {self.name} (#{self.id_number})"
+#     def __str__(self):
+#         return f"Person: {self.name} (#{self.id_number})"
     
-class Patient(Person):
-    def __init__(self, name, id_number):
-        super().__init__(name, id_number)
-        self.diagnoses = []
-        self.bill = 0
+# class Patient(Person):
+#     def __init__(self, name, id_number):
+#         super().__init__(name, id_number)
+#         self.diagnoses = []
+#         self.bill = 0
         
-    def add_diagnosis(self, text:str):
-        self.diagnoses.append(text)
+#     def add_diagnosis(self, text:str):
+#         self.diagnoses.append(text)
     
-    def add_charge(self, amount: int):
-        if amount <= 0:
-            raise ValueError("Summa musbat bo'lishi kerak")
-        self.bill += amount
+#     def add_charge(self, amount: int):
+#         if amount <= 0:
+#             raise ValueError("Summa musbat bo'lishi kerak")
+#         self.bill += amount
     
-    def pay(self, amount: int):
-        if amount <= 0:
-            return False
-        if amount >= self.bill:
-            self.bill = 0
-        else:
-            self.bill -= amount
-        return True
+#     def pay(self, amount: int):
+#         if amount <= 0:
+#             return False
+#         if amount >= self.bill:
+#             self.bill = 0
+#         else:
+#             self.bill -= amount
+#         return True
     
-    def get_balance(self):
-        return self.bill
+#     def get_balance(self):
+#         return self.bill
     
-    def print_history(self):
-        print(f"Bemor: {self.name} (#{self.id_number})")
-        print("Tashxislar tarixi:")
-        for i, r in enumerate(self.diagnoses, start=1):
-            print(f" {i} {r}")
-        print(f"Qarzdorlik: {self.bill}")
+#     def print_history(self):
+#         print(f"Bemor: {self.name} (#{self.id_number})")
+#         print("Tashxislar tarixi:")
+#         for i, r in enumerate(self.diagnoses, start=1):
+#             print(f" {i} {r}")
+#         print(f"Qarzdorlik: {self.bill}")
         
-class Doctor(Person):
-    def __init__(self, name, id_number, specialty):
-        super().__init__(name, id_number)
-        self.schedule = {}
-        self.specialty = specialty
+# class Doctor(Person):
+#     def __init__(self, name, id_number, specialty):
+#         super().__init__(name, id_number)
+#         self.schedule = {}
+#         self.specialty = specialty
         
-    def add_slot(self, day:str,time:str):
-        slots = self.schedule.setdefault(day,[])
-        if time not in slots:
-            slots.append(time)
+#     def add_slot(self, day:str,time:str):
+#         slots = self.schedule.setdefault(day,[])
+#         if time not in slots:
+#             slots.append(time)
             
-    def book_slot(self, day:str, time:str):
-        if time in self.schedule.get(day,[]):
-            self.schedule[day].remove(time)
+#     def book_slot(self, day:str, time:str):
+#         if time in self.schedule.get(day,[]):
+#             self.schedule[day].remove(time)
+#             return True
+#         return False
+            
+#     def available_slots(self, day:str):
+#         return self.schedule.get(day,[]).copy()
+    
+#     def __str__(self):
+#         return f"Dr.name: {self.name}({self.specialty})"   
+        
+# p = Patient("Aziz", "AB1234567")
+# p.add_diagnosis("ORVI")
+# p.add_charge(150_000)
+# p.add_charge(80_000)
+# print(p.get_balance())  # 230000
+# p.pay(100_000)
+# print(p.get_balance())  # 130000
+# p.print_history()
+
+# d = Doctor("Gulrux", "CD7654321", specialty="Cardiologist")
+# d.add_slot("Mon", "09:00")
+# d.add_slot("Mon", "09:30")
+# print(d.book_slot("Mon", "09:00"))  # True
+# print(d.book_slot("Mon", "09:00"))  # False
+# print(d.available_slots("Mon"))     # ["09:30"]
+# print(d) # Dr.Gulrux (Cardiologist)
+         
+#                    3-masala
+class Course:
+    def __init__(self, title, teacher):
+        self.title = title
+        self.teacher = teacher
+        self.students = []
+        
+    def get_title(self):
+        return self.title
+    
+    def get_teacher(self):
+        return self.teacher
+    
+    def enroll(self, student_name:str):
+        if student_name not in self.students:
+            self.students.append(student_name)
+            return True
+        return False    
+    
+    def drop(self, student_name:str):
+        if student_name in self.students:
+            self.students.remove(student_name)
             return True
         return False
-            
-    def available_slots(self, day:str):
-        return self.schedule.get(day,[]).copy()
     
     def __str__(self):
-        return f"Dr.name: {self.name}({self.specialty})"   
+        return f"Course: {self.title} ({self.teacher})"
+    
+class OnlineCourse(Course):
+    def __init__(self, title, teacher, url, max_students):
+        super().__init__(title, teacher)
+        self.url = url
+        self.max_students = max_students
+    
+    def enroll(self, student_name:str):
+        if len(self.students) >= self.max_students:
+            return False
+        return super().enroll(student_name)
+    
+    def get_room(self):
+        return f"Virtual: {self.url}"
+    
+class OfflineCourse(Course):
+    def __init__(self, title, teacher, room, capacity):
+        super().__init__(title, teacher)
+        self.room = room
+        self.capacity = capacity
         
-p = Patient("Aziz", "AB1234567")
-p.add_diagnosis("ORVI")
-p.add_charge(150_000)
-p.add_charge(80_000)
-print(p.get_balance())  # 230000
-p.pay(100_000)
-print(p.get_balance())  # 130000
-p.print_history()
+    def enroll(self, student_name: str):
+        if len(self.students) >= self.capacity:
+            return False
+        return super().enroll(student_name)
+    
+    def get_room(self):
+        return f"Room: {self.room}"
+        
+o = OnlineCourse("Python Basics", "Guzal", url="https://nt.uz/py", max_students=2)
+print(o.enroll("Ali"))      # True
+print(o.enroll("Vali"))     # True
+print(o.enroll("Karim"))    # False (to‘ldi)
+print(o.get_room())         # Virtual: https://nt.uz/py
 
-d = Doctor("Gulrux", "CD7654321", specialty="Cardiologist")
-d.add_slot("Mon", "09:00")
-d.add_slot("Mon", "09:30")
-print(d.book_slot("Mon", "09:00"))  # True
-print(d.book_slot("Mon", "09:00"))  # False
-print(d.available_slots("Mon"))     # ["09:30"]
-print(d) # Dr.Gulrux (Cardiologist)
-         
+f = OfflineCourse("Algorithms", "Dilshod", room="B-203", capacity=1)
+print(f.enroll("Soliha"))   # True
+print(f.enroll("Nodir"))    # False
+print(f.get_room())         # Room: B-203
+print(f)
